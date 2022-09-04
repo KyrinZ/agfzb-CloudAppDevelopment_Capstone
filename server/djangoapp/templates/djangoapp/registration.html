@@ -1,11 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-    <body>
-    <!--Add a registration form here -->
-    </body>
-</html>
+{% extends "djangoapp/layouts/default.html" %}
+
+<!--  -->
+{% block title %}
+<title>Sign up</title>
+{% endblock %}
+
+<!--  -->
+{% block content %}
+<form action="{% url 'djangoapp:registration' %}" method="post">
+    {% csrf_token %}
+  <div class="mb-3">
+    <label for="username" class="form-label">Username</label>
+    <input
+      type="text"
+      class="form-control"
+      id="username"
+      name="username"
+      autocomplete="username"
+    />
+  </div>
+  <div class="mb-3">
+    <label for="firstName" class="form-label">First Name</label>
+    <input type="text" class="form-control" id="firstName" name="first_name"/>
+  </div>
+  <div class="mb-3">
+    <label for=lastName" class="form-label">Last Name</label>
+    <input type="text" class="form-control" id="lastName" name="last_name"/>
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="password" name="password" autocomplete="current-password"/>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
