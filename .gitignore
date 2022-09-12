@@ -53,6 +53,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+
 # Translations
 *.mo
 *.pot
@@ -139,4 +140,4 @@ server/djangoapp/migrations/
 .DS_Store
 *.pyc
 server/djangoapp/migrations/
-
+node_modules/
