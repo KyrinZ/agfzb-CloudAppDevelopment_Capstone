@@ -17,6 +17,8 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
     {% load static %}
+    <!--  -->
+    {% block styles %} {% endblock %}
   </head>
 
   <body>
@@ -67,6 +69,15 @@
 
             {% if user.is_authenticated %}
             <div class="row g-2 align-items-center">
+              {% if url_name == 'dealer_details' %}
+              <div class="col-auto px-2">
+                <a
+                  class="btn btn-link"
+                  href="{% url 'djangoapp:add_review' dealer_id %}"
+                  >Add Review</a
+                >
+              </div>
+              {% endif %}
               <div class="col-auto px-2">
                 <a class="btn btn-link" href="{% url 'djangoapp:index' %}"
                   >{{ user.first_name }} ({{ user.username }})</a
@@ -124,6 +135,19 @@
     </nav>
     {% endwith %}
 
-    <main class="container p-5">{% block content %} {% endblock %}</main>
+    <main class="container p-5">
+      <!-- Feedback messages is shown here -->
+      {% if messages %}
+        {% for message in messages %}
+          <div{% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}"{% endif %} role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <!--  -->
+      {% block content %} {% endblock %}
+    </main>
+
+    <!--  -->
+    {% block script %} {% endblock %}
   </body>
 </html>

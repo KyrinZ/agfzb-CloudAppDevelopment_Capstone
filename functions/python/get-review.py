@@ -1,6 +1,16 @@
+#
+#
+# main() will be run when you invoke this action
+#
+# @param Cloud Functions actions accept a single parameter, which must be a JSON object.
+#
+# @return The output of this action, which must be a JSON object.
+#
+#
 import sys
 from ibmcloudant.cloudant_v1 import CloudantV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
 
 def response(code, data):
     return {
@@ -9,6 +19,25 @@ def response(code, data):
         "body": data,
     }
 
+
+def get_review(raw_reviews_from_db):
+    reviews = [i['doc'] for i in raw_reviews_from_db]
+    result = []
+    fields = [
+        "id",
+        "dealership",
+        "name",
+        "purchase",
+        "review",
+        "purchase",
+        "purchase_date",
+        "car_make",
+        "car_model",
+        "car_year",
+    ]
+    for i in reviews:
+        result.append({k:v for k,v in i.items() if k in fields})
+    return result
 
 def main(dict):
     DATABASE_NAME = "reviews"
@@ -21,37 +50,31 @@ def main(dict):
         if "dealerId" in dict:
             res = service.post_find(
                 db="reviews",
+                fields=[
+                    "id",
+                    "dealership",
+                    "name",
+                    "purchase",
+                    "review",
+                    "purchase",
+                    "purchase_date",
+                    "car_make",
+                    "car_model",
+                    "car_year",
+                ],
                 selector={"dealership": {"$eq": int(dict["dealerId"])}},
             ).get_result()["docs"]
             if not res:
                 return response(404, {"message": "dealerId does not exist"})
             return response(
                 200,
-                [
-                    {
-                        "id": i["id"],
-                        "dealership": i["dealership"],
-                        "name": i["name"],
-                        "purchase": i["purchase"],
-                        "review": i["review"],
-                    }
-                    for i in res
-                ],
+                res,
             )
         res = service.post_all_docs(DATABASE_NAME, include_docs=True)
 
         return response(
             200,
-            [
-                {
-                    "id": i["doc"]["id"],
-                    "dealership": i["doc"]["dealership"],
-                    "name": i["doc"]["name"],
-                    "purchase": i["doc"]["purchase"],
-                    "review": i["doc"]["review"],
-                }
-                for i in res.result["rows"]
-            ],
+            get_review(res.result["rows"]),
         )
     except Exception as e:
         return response(500, {"message": "Something went wrong"})

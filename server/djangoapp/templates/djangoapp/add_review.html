@@ -1,16 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+{% extends "djangoapp/layouts/default.html" %}
 
-</head>
-    <body>
-    <!--Add review form here -->
-    </body>
-</html>
+<!--  -->
+{% block title %}
+<title>Add Review</title>
+
+{% endblock %}
+
+<!--  -->
+{% block styles %}
+
+<style>
+  textarea {
+    resize: none;
+  }
+</style>
+{% endblock %}
+
+<!--  -->
+{% block content %}
+<h2>Add a review about {{ dealership.full_name }}</h2>
+
+<form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="review" class="font-weight-bold"
+      >Enter the review content:</label
+    >
+    <textarea
+      class="form-control"
+      name="review"
+      id="review"
+      placeholder="This is great car dealer"
+    ></textarea>
+  </div>
+
+  <div class="form-group form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      name="purchase"
+      id="purchase"
+    />
+    <label class="form-check-label" for="purchase"
+      >Has purchased the car from {{ dealership.full_name }}? (select purchased
+      car information below if checked)</label
+    >
+  </div>
+
+  <div id="purchase-field"></div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
+
+<!--  -->
+{% block script %}
+<script>
+  $("#purchase").change((e) => {
+    const HTML_OUTPUT = ``;
+    if ($("#purchase").prop("checked")) {
+      renderPurchaseFielder();
+    } else {
+      $("#purchase-field").html("");
+    }
+  });
+
+  function renderPurchaseFielder() {
+    const HTML_OUTPUT = `<div class="form-group">
+      <select
+        class="custom-select"
+        name="car"
+        id="car"
+      >
+        <option selected disabled>Select your car (model-make-year)</option>
+        {% for car in cars %}
+         <option selected value={{car.id}}>{{car.name}}-{{car.carmake.name}}-{{ car.year }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="purchase_date" class="font-weight-bold"
+        >Select Your Purchase Date:</label
+      >
+      <input
+        class="form-control"
+        type="date"
+        name="purchase_date"
+        id="purchase_date"
+      />
+    </div>`;
+
+    $("#purchase-field").html(HTML_OUTPUT);
+  }
+</script>
+{% endblock %}

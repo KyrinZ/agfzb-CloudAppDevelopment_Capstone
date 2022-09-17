@@ -1,35 +1,63 @@
+/**
+ *
+ * main() will be run when you invoke this action
+ *
+ * @param Cloud Functions actions accept a single parameter, which must be a JSON object.
+ *
+ * @return The output of this action, which must be a JSON object.
+ *
+ */
 const { CloudantV1 } = require("@ibm-cloud/cloudant");
 const { IamAuthenticator } = require("ibm-cloud-sdk-core");
 
-async function main(params) {
+async function main({ IAM_API_KEY, COUCH_URL, state, dealerId }) {
   try {
     const DATABASE = "dealerships";
-    const authenticator = new IamAuthenticator({ apikey: params.IAM_API_KEY });
+    const authenticator = new IamAuthenticator({ apikey: IAM_API_KEY });
     const cloudant = CloudantV1.newInstance({
       authenticator: authenticator,
     });
 
-    cloudant.setServiceUrl(params.COUCH_URL);
+    cloudant.setServiceUrl(COUCH_URL);
     let result = [];
-    if (params.state) {
+
+    if (state || dealerId) {
+      const selector = {};
+      if (dealerId) {
+        selector.id = {
+          $eq: parseInt(dealerId),
+        };
+      } else if (state) {
+        selector.state = {
+          $eq: state,
+        };
+      }
+
       result = (
         await cloudant.postFind({
           db: DATABASE,
-          selector: { state: params.state },
+          fields: [
+            "id",
+            "city",
+            "state",
+            "st",
+            "address",
+            "zip",
+            "lat",
+            "long",
+            "full_name",
+            "short_name",
+          ],
+          selector: selector,
         })
-      ).result.docs.map((i) => ({
-        id: i.id,
-        city: i.city,
-        state: i.state,
-        st: i.st,
-        address: i.address,
-        zip: i.zip,
-        lat: i.lat,
-        long: i.long,
-      }));
+      ).result.docs;
+
       if (result.length < 1) {
+        const msg = dealerId
+          ? "dealerId does not exist"
+          : "The state does not exist";
         return response(404, {
-          message: "The state does not exist",
+          message: msg,
         });
       }
     } else {
@@ -47,6 +75,8 @@ async function main(params) {
         zip: i.doc.zip,
         lat: i.doc.lat,
         long: i.doc.long,
+        full_name: i.doc.full_name,
+        short_name: i.doc.short_name,
       }));
 
       if (result.length < 1) {
