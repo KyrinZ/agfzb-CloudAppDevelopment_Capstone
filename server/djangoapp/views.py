@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.shortcuts import  render, redirect
+from django.shortcuts import render, redirect
 
 
 from django.contrib.auth import login, logout, authenticate
@@ -160,15 +160,19 @@ def add_review(request, dealer_id):
                 }
                 if data.get("purchase") == "on":
                     car = CarModel.objects.filter(id=data.get("car")).first()
-                    cleaned_data = cleaned_data | {
-                        "purchase": data.get("purchase") == "on",
-                        "car_make": car.carmake.name,
-                        "car_model": car.name,
-                        "car_year": car.year,
-                        "purchase_date": datetime.strptime(
-                            data.get("purchase_date"), "%Y-%m-%d"
-                        ).strftime("%d/%m/%Y"),
+                    cleaned_data = {
+                        **cleaned_data,
+                        **{
+                            "purchase": data.get("purchase") == "on",
+                            "car_make": car.carmake.name,
+                            "car_model": car.name,
+                            "car_year": car.year,
+                            "purchase_date": datetime.strptime(
+                                data.get("purchase_date"), "%Y-%m-%d"
+                            ).strftime("%d/%m/%Y"),
+                        },
                     }
+                    print(cleaned_data)
                 res = post_request(ADD_REVIEW_URL, {"review": cleaned_data})
                 if res.get("ok"):
                     messages.success(request, "Review added.")

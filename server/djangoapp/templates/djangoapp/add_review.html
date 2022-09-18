@@ -74,7 +74,7 @@
       >
         <option selected disabled>Select your car (model-make-year)</option>
         {% for car in cars %}
-         <option selected value={{car.id}}>{{car.name}}-{{car.carmake.name}}-{{ car.year }}</option>
+         <option value={{car.id}}>{{car.name}}-{{car.carmake.name}}-{{ car.year }}</option>
         {% endfor %}
       </select>
     </div>
