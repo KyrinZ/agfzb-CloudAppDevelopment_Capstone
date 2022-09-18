@@ -6,7 +6,7 @@ ENV PYTHONWRITEBYTECODE 1
 RUN apt-get update \
     && apt-get install -y netcat
 
-ENV APP=/app
+ENV APP=/server
 
 # Change the workdir.
 WORKDIR $APP
