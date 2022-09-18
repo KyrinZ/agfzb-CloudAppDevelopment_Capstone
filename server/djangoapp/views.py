@@ -1,21 +1,16 @@
-from pprint import pprint
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import  render, redirect
 
-# from .models import related models
-# from .restapis import related methods
+
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
-import json
 from django.views.decorators.http import require_http_methods
 from djangoapp.models import CarModel
 
 from djangoapp.restapis import (
-    analyze_review_sentiments,
     get_dealer_reviews_from_cf,
     get_dealers_from_cf,
     post_request,
@@ -174,8 +169,8 @@ def add_review(request, dealer_id):
                             data.get("purchase_date"), "%Y-%m-%d"
                         ).strftime("%d/%m/%Y"),
                     }
-                res = post_request(ADD_REVIEW_URL, {"review":cleaned_data})
-                if res.get('ok'):
+                res = post_request(ADD_REVIEW_URL, {"review": cleaned_data})
+                if res.get("ok"):
                     messages.success(request, "Review added.")
                     return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
                 messages.error(request, "Something went wrong.")
@@ -185,5 +180,3 @@ def add_review(request, dealer_id):
         else:
             return render(request, "djangoapp/add_review.html", context)
     return redirect("djangoapp:login")
-
-

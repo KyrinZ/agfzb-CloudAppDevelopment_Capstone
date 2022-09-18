@@ -1,16 +1,17 @@
-{% extends "djangoapp/layouts/default.html" %}
-
-<!--  -->
-{% block title %}
-<title>About</title>
-{% endblock %}
-
-<!--  -->
-{% block content %}
-<h1 class="display-1">About</h1>
-
-<p>
-  Welcome to Best Cars dealership, home to the best cars in North America. We
-  sell domestic and imported cars at reasonable prices.
-</p>
-{% endblock %}
+<html lang="en">
+  <head>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <meta charset="UTF-8" />
+    <title>About</title>
+  </head>
+  <body class="container mt-5">
+    <h3>
+      Welcome to Best Cars dealership, home to the best cars in North America.
+      We sell domestic and imported cars at reasonable prices.
+    </h3>
+  </body>
+</html>
